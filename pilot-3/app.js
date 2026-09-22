@@ -32,7 +32,7 @@ const products = [
 ];
 const grid = document.querySelector('#product-grid');
 function render(filter='all'){
-  grid.innerHTML = products.filter(p=>filter==='all'||p[2]===filter).map(p=>`<article class="product"><div class="product-icon" aria-hidden="true">${p[5]}</div><small>${p[0]}</small><h3>${p[1]}</h3><div class="meta">${p[3]}</div><div class="bottom"><span class="price">${p[4]}</span><a class="enquire" href="https://wa.me/17325358584?text=${encodeURIComponent(`Hello JIJA Services, I'm interested in ${p[0]} — ${p[1]}.`)}" target="_blank" rel="noopener">Ask →</a></div></article>`).join('');
+  grid.innerHTML = products.filter(p=>filter==='all'||p[2]===filter).map(p=>{const imageNumber=products.indexOf(p)+1;return `<article class="product"><div class="product-image"><img src="assets/products/${String(imageNumber).padStart(2,'0')}.jpg" alt="${p[1]}" loading="lazy"></div><small>${p[0]}</small><h3>${p[1]}</h3><div class="meta">${p[3]}</div><div class="bottom"><span class="price">${p[4]}</span><a class="enquire" href="https://wa.me/17325358584?text=${encodeURIComponent(`Hello JIJA Services, I'm interested in ${p[0]} — ${p[1]}.`)}" target="_blank" rel="noopener">Ask →</a></div></article>`}).join('');
 }
 render();
 document.querySelectorAll('.filters button').forEach(button=>button.addEventListener('click',()=>{document.querySelector('.filters .active').classList.remove('active');button.classList.add('active');render(button.dataset.filter)}));
