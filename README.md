@@ -1,18 +1,16 @@
-# JIJA Services LLC — Website Concepts
+# JIJA Services LLC
 
-Three responsive static catalogue concepts for JIJA Services LLC:
+Responsive static catalogue for JIJA Services LLC in Somerset, New Jersey.
 
-- `pilot-1/` — Clean Business Catalogue
-- `pilot-2/` — Modern Retail Storefront
-- `pilot-3/` — Local Supplier + Festivals
+- 30 disposable food-packaging products and 7 PPE/cleanroom products
+- Search, category filters, product details, and direct Call/Email/WhatsApp actions
+- Retail and wholesale delivery information
+- Walmart and Amazon marketplace placeholders marked “Coming soon”
+- No backend, database, cart, payment processing, or customer-data collection
 
-The root page provides a simple concept selector. Each pilot presents the full
-30-product catalogue, public pricing, retail and wholesale delivery rules,
-direct call/email/WhatsApp ordering, and Walmart/Amazon “Coming soon” messaging.
-
-The pilots contain no backend, database, shopping basket, account system, or
-payment processing. Their structure leaves room for those capabilities in a
-future phase.
+The selected Modern Retail Storefront is published at the repository root. The
+former pilot concepts remain recoverable in repository history at commit
+`54172ef` and the legacy `/pilot-2/` URL redirects to the root site.
 
 ## Copyright
 

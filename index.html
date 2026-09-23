@@ -1,24 +1,27 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Three website design directions for JIJA Services LLC.">
-  <title>JIJA Services — Website Concepts</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="portal.css">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="JIJA Services LLC supplies disposable food packaging, PPE and cleanroom essentials for retail and wholesale customers in Somerset, New Jersey."><meta name="theme-color" content="#0b543b">
+  <title>JIJA Services LLC | Disposable Packaging & PPE in Somerset, NJ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="styles.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"JIJA Services LLC","description":"Disposable food packaging, PPE and cleanroom supplies for retail and wholesale customers.","telephone":"+1-732-535-8584","email":"jijaservices@gmail.com","address":{"@type":"PostalAddress","addressLocality":"Somerset","addressRegion":"NJ","postalCode":"08873","addressCountry":"US"}}</script>
 </head>
 <body>
-  <main>
-    <header><span class="label">JIJA Services LLC</span><h1>Choose the direction<br>that feels like <em>you.</em></h1><p>Three mobile-friendly catalogue concepts. Each includes all 30 products, direct contact ordering and room to grow into online checkout later.</p></header>
-    <section class="cards">
-      <a class="card clean" href="pilot-1/"><span class="number">01</span><div class="preview"><span></span><span></span><span></span></div><small>Professional · Clear · Trusted</small><h2>Clean Business Catalogue</h2><p>A polished, product-first direction for restaurants, caterers and wholesale buyers.</p><b>Open concept <span>→</span></b></a>
-      <a class="card retail" href="pilot-2/"><span class="number">02</span><div class="preview"><span></span><span></span><span></span></div><small>Friendly · Visual · Shop-ready</small><h2>Modern Retail Storefront</h2><p>A familiar shopping experience that makes products and promotions easy to explore.</p><b>Open concept <span>→</span></b></a>
-      <a class="card local" href="pilot-3/"><span class="number">03</span><div class="preview"><span></span><span></span><span></span></div><small>Local · Community · Seasonal</small><h2>Local Supplier + Festivals</h2><p>A warm local-business story with festival energy and direct owner-led service.</p><b>Open concept <span>→</span></b></a>
-    </section>
-    <footer><span>Concept review · September 2026</span><span>Best viewed on phone and desktop</span></footer>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="announcement">Free delivery: retail orders $100+ within 15 miles · wholesale orders $250+ within 20 miles of 08873</div>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="JIJA Services LLC home"><svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#eaf6ef"/><path fill="#21895a" d="M27 9h10v14h14v10H37v14H27V33H13V23h14z"/><path fill="#7dbd42" d="M39 47c8-1 13-5 16-12-8 0-14 4-16 12zm-14 3c-7 0-12-3-16-9 8-1 14 2 16 9z"/></svg><span class="brand-copy"><strong>JIJA</strong><span>SERVICES LLC</span><small>Protecting People. <em>Protecting Planet.</em></small></span></a>
+    <button class="menu" aria-expanded="false" aria-controls="nav">Menu</button><nav id="nav" aria-label="Main navigation"><a href="#products">Products</a><a href="#delivery">Delivery</a><a href="#about">About</a><a class="nav-cta" href="#contact">Contact us</a></nav>
+  </header>
+  <main id="main">
+    <section class="hero" id="top"><div class="hero-copy"><p class="eyebrow">Retail & wholesale · Somerset, New Jersey</p><h1>Disposable essentials for <em>people and planet.</em></h1><p class="lead">A dependable local source for food-service packaging, PPE and cleanroom products—serving restaurants, caterers, events, community organizations, businesses and families.</p><div class="actions"><a class="button primary" href="#products">Explore 37 products</a><a class="button secondary" href="tel:+17325358584">Call (732) 535-8584</a></div><ul class="proof" aria-label="Service highlights"><li>Retail & wholesale</li><li>Eco-conscious options</li><li>Direct local service</li></ul></div><div class="hero-art" aria-hidden="true"><div class="hero-card hero-card-food"><span>Food service</span><b>Packaging for every table</b></div><div class="hero-card hero-card-ppe"><span>PPE & cleanroom</span><b>Everyday protective supplies</b></div><div class="hero-stat"><b>37</b><span>products<br>in one catalogue</span></div></div></section>
+    <section class="shop-section" id="products"><div class="section-head"><div><p class="eyebrow">Product catalogue</p><h2>Find the right essential.</h2><p>Browse product specifications and contact us for availability and current pricing.</p></div><p id="result-count" aria-live="polite">37 products</p></div><div class="catalogue-tools"><label class="search"><span class="sr-only">Search products</span><input id="search" type="search" placeholder="Search by product, SKU or use…" autocomplete="off"></label><div class="filters" role="group" aria-label="Filter products by category"><button class="active" data-category="All">All</button><button data-category="Plates & Bowls">Plates & bowls</button><button data-category="Containers">Containers</button><button data-category="Cups">Cups</button><button data-category="Cutlery">Cutlery</button><button data-category="Trays">Trays</button><button data-category="PPE & Cleanroom">PPE & cleanroom</button></div></div><div class="catalogue" id="catalogue"></div></section>
+    <section class="delivery" id="delivery"><div><p class="eyebrow">Local delivery</p><h2>Stock up. We’ll bring it.</h2><p>Free-delivery eligibility is based on distance from ZIP code 08873. Contact JIJA Services to confirm availability for your address.</p></div><div class="delivery-cards"><article><span>Retail orders</span><b>$100+</b><p>Free delivery within 15 miles</p></article><article><span>Wholesale orders</span><b>$250+</b><p>Free delivery within 20 miles</p></article></div></section>
+    <section class="about" id="about"><div class="about-mark"><svg viewBox="0 0 64 64" aria-hidden="true"><path fill="#21895a" d="M27 5h10v17h17v10H37v17H27V32H10V22h17z"/><path fill="#8cc63f" d="M39 52c8-1 14-6 17-14-9 0-15 5-17 14z"/></svg><span>Protecting People.</span><strong>Protecting Planet.</strong></div><div><p class="eyebrow">Your local supply partner</p><h2>One platform for your solution.</h2><p>JIJA Services LLC supplies biodegradable food-service products, disposable plates, bowls, containers, cups, cutlery, napkins, aluminum trays, PPE and selected cleanroom supplies.</p><ul><li>Solutions for homes, events and organizations</li><li>Retail and wholesale quantities</li><li>Personal service from a local Somerset business</li></ul></div></section>
+    <section class="marketplaces"><p class="eyebrow">More ways to shop are on the way</p><h2>Marketplace stores coming soon</h2><div><span>Walmart <small>Coming soon</small></span><span>amazon <small>Coming soon</small></span></div></section>
+    <section class="contact" id="contact"><p class="eyebrow">Questions or ready to order?</p><h2>Talk directly with Jignesh.</h2><p>Get help choosing products, confirming availability or planning a retail or wholesale order.</p><div class="contact-actions"><a href="tel:+17325358584">Call <b>(732) 535-8584</b></a><a href="mailto:jijaservices@gmail.com">Email <b>jijaservices@gmail.com</b></a><a href="https://wa.me/17325358584" target="_blank" rel="noopener">WhatsApp <b>Start a chat ↗</b></a></div></section>
   </main>
-</body>
-</html>
+  <dialog id="product-dialog" aria-labelledby="dialog-title"><button class="dialog-close" aria-label="Close product details">×</button><div id="dialog-content"></div></dialog>
+  <footer><a class="brand" href="#top" aria-label="JIJA Services LLC home"><span class="footer-brand">JIJA SERVICES LLC</span></a><p>Somerset, NJ · Serving homes and businesses</p><p>© 2026 JIJA Services LLC. All Rights Reserved.</p></footer><script src="app.js"></script>
+</body></html>
