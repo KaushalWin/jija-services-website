@@ -3,6 +3,7 @@
   "name": "jija-services-website",
   "compatibility_date": "2026-10-01",
   "assets": {
-    "directory": "."
+    "directory": "./dist",
+    "html_handling": "auto-trailing-slash"
   }
 }

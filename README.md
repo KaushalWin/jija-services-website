@@ -8,6 +8,18 @@ Responsive static catalogue for JIJA Services LLC in Somerset, New Jersey.
 - Walmart and Amazon marketplace placeholders marked “Coming soon”
 - No backend, database, cart, payment processing, or customer-data collection
 
+## Build and deploy
+
+Create the allowlisted static asset directory before running Wrangler:
+
+```sh
+./scripts/build-static.sh
+npx wrangler deploy
+```
+
+Only the files copied into `dist/` are deployed. Repository metadata,
+documentation, configuration, and source-control files are not published.
+
 The selected Modern Retail Storefront is published at the repository root. The
 former pilot concepts remain recoverable in repository history at commit
 `54172ef` and the legacy `/pilot-2/` URL redirects to the root site.

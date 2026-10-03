@@ -13,3 +13,12 @@ a:focus-visible,button:focus-visible,input:focus-visible,dialog:focus-visible{ou
 .catalogue-note,.claims-note{max-width:900px;color:#53645f;font-size:12px;line-height:1.55}
 .catalogue-note{margin:24px 0 0}.claims-note{margin-top:22px}
 @media(max-width:600px){.brand-image img{max-width:100%}.menu{flex:0 0 auto;padding:10px 6px}}
+
+.catalog-download{margin:72px max(5vw,24px) 0;padding:48px 5%;border-radius:18px;background:linear-gradient(135deg,#e7f2d4,#fff);display:flex;align-items:center;justify-content:space-between;gap:40px;border:1px solid var(--line)}
+.catalog-download h2{margin-bottom:12px}.catalog-download p:last-child{color:#52655f;line-height:1.6;margin-bottom:0}.catalog-actions{display:flex;gap:12px;flex:0 0 auto}.catalog-actions .button{white-space:nowrap}
+.business-solutions{padding:90px max(5vw,24px);background:#eaf2df;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:70px;align-items:center}.solutions-copy p:last-child{line-height:1.7;color:#455b55;max-width:680px}.audience-list{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:1fr 1fr;gap:12px}.audience-list li{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px;font-weight:750}.audience-list li::before{content:"✓";color:var(--green);margin-right:10px}
+.confirmation-note{padding:14px 16px;border-left:4px solid var(--lime);background:#f3f7ed;color:var(--ink)!important}.dialog-grid dl{margin:22px 0}.dialog-grid dl div{display:grid;grid-template-columns:145px 1fr;gap:16px}.dialog-grid dd{line-height:1.45}
+@media(max-width:1100px){nav{gap:14px}.brand-image{width:min(300px,38vw)}.catalogue{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:900px){.catalog-download{align-items:flex-start;flex-direction:column}.business-solutions{grid-template-columns:1fr;gap:30px}.catalogue{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.catalog-download{margin:50px 14px 0;padding:34px 22px}.catalog-actions{width:100%;flex-direction:column}.catalog-actions .button{white-space:normal}.business-solutions{padding:65px 18px}.audience-list{grid-template-columns:1fr}.dialog-grid dl div{grid-template-columns:1fr;gap:2px}.dialog-grid>div{max-height:55vh;overflow:auto}}
+@media(max-width:390px){.catalogue{grid-template-columns:1fr}.product-visual{height:210px}}
