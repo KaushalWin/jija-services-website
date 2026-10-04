@@ -86,7 +86,10 @@ function openProduct(id){
   const rows=confirmedFields.filter(([,key])=>product[key]).map(([label,key])=>`<div><dt>${label}</dt><dd>${escapeHtml(product[key])}</dd></div>`).join("");
   const reference=product.sku?`${product.sku} · ${product.category}`:product.category;
   const message=encodeURIComponent(`Hi, I'm interested in ${product.name}${product.sku?` (${product.sku})`:""}. Please share availability and details.`);
-  dialogContent.innerHTML=`<div class="dialog-grid"><img src="${product.image}" alt="${escapeHtml(product.name)}" width="900" height="900"><div><span class="sku">${escapeHtml(reference)}</span><h2 id="dialog-title">${escapeHtml(product.name)}</h2>${rows?`<dl>${rows}</dl>`:`<p class="confirmation-note">Material, size, quantity and product number have not yet been confirmed. Contact us for current specifications.</p>`}<p>Contact JIJA Services for availability, options and current pricing.</p><a class="button primary" href="https://wa.me/17325358584?text=${message}" target="_blank" rel="noopener">Ask on WhatsApp ↗</a></div></div>`;
+  const specificationNote=rows
+    ? `<p class="confirmation-note">Need another product detail? Contact us to confirm specifications for your order.</p>`
+    : `<p class="confirmation-note">Material, size, quantity and product number are available on request. Contact us to confirm specifications for your order.</p>`;
+  dialogContent.innerHTML=`<div class="dialog-grid"><img src="${product.image}" alt="${escapeHtml(product.name)}" width="900" height="900"><div><span class="sku">${escapeHtml(reference)}</span><h2 id="dialog-title">${escapeHtml(product.name)}</h2>${rows?`<dl>${rows}</dl>`:""}${specificationNote}<p>Contact JIJA Services for availability, options and current pricing.</p><a class="button primary" href="https://wa.me/17325358584?text=${message}" target="_blank" rel="noopener">Ask on WhatsApp ↗</a></div></div>`;
   dialog.showModal();
   document.body.classList.add("no-scroll");
   document.querySelector(".dialog-close").focus();
