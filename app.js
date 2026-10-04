@@ -69,7 +69,7 @@ function filtered(){
 }
 
 function cardSummary(product){
-  return [product.size,product.capacity,product.caseQuantity].filter(Boolean).join(" · ")||"Details available on request";
+  return [product.size,product.capacity,product.caseQuantity].filter(Boolean).join(" · ")||"Contact us to confirm specifications";
 }
 
 function render(){
@@ -88,7 +88,7 @@ function openProduct(id){
   const message=encodeURIComponent(`Hi, I'm interested in ${product.name}${product.sku?` (${product.sku})`:""}. Please share availability and details.`);
   const specificationNote=rows
     ? `<p class="confirmation-note">Need another product detail? Contact us to confirm specifications for your order.</p>`
-    : `<p class="confirmation-note">Material, size, quantity and product number are available on request. Contact us to confirm specifications for your order.</p>`;
+    : `<p class="confirmation-note">Please contact us to confirm material, size, case quantity and product number for your order.</p>`;
   dialogContent.innerHTML=`<div class="dialog-grid"><img src="${product.image}" alt="${escapeHtml(product.name)}" width="900" height="900"><div><span class="sku">${escapeHtml(reference)}</span><h2 id="dialog-title">${escapeHtml(product.name)}</h2>${rows?`<dl>${rows}</dl>`:""}${specificationNote}<p>Contact JIJA Services for availability, options and current pricing.</p><a class="button primary" href="https://wa.me/17325358584?text=${message}" target="_blank" rel="noopener">Ask on WhatsApp ↗</a></div></div>`;
   dialog.showModal();
   document.body.classList.add("no-scroll");
