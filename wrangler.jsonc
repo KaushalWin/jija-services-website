@@ -2,6 +2,9 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "jija-services-website",
   "compatibility_date": "2026-10-01",
+  "build": {
+    "command": "bash scripts/build-static.sh"
+  },
   "assets": {
     "directory": "./dist",
     "html_handling": "auto-trailing-slash"
