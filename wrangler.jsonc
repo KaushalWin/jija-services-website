@@ -3,7 +3,9 @@
   "name": "jija-services-website",
   "main": "src/worker.js",
   "compatibility_date": "2026-10-01",
-  "build": { "command": "bash scripts/build-static.sh" },
+  "build": {
+    "command": "bash scripts/build-static.sh"
+  },
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
@@ -14,13 +16,25 @@
   "preview_urls": false,
   "vars": {
     "TURNSTILE_SITEKEY": "0x4AAAAAAFO4F0gRg5ItXyKv",
-    "ACCESS_TEAM_DOMAIN": "",
-    "ACCESS_AUD": ""
+    "ACCESS_TEAM_DOMAIN": "https://gentle-term-b43d.cloudflareaccess.com",
+    "ACCESS_AUD": "e54353c26b3f500609ad2b4cb9748bb969956beffcff4cbacd8bcc2c6612b32e"
   },
-  "d1_databases": [{
-    "binding": "REVIEWS_DB",
-    "database_name": "jija-reviews",
-    "database_id": "a1b6c740-11a3-4065-af94-e2195a43331d",
-    "migrations_dir": "migrations"
-  }]
+  "d1_databases": [
+    {
+      "binding": "REVIEWS_DB",
+      "database_name": "jija-reviews",
+      "database_id": "a1b6c740-11a3-4065-af94-e2195a43331d",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "routes": [
+    {
+      "pattern": "jijaservices.com",
+      "custom_domain": true
+    },
+    {
+      "pattern": "admin.jijaservices.com",
+      "custom_domain": true
+    }
+  ]
 }
