@@ -60,3 +60,22 @@ PLAYWRIGHT_CHROMIUM_PATH=/usr/bin/chromium npm exec --yes --package=node@22 -- n
 ```
 
 Public Managed Turnstile human submission and email-OTP completion retain the limitations described above. Root handles final account policy/session state and release push; the delegated browser made no account or DNS changes.
+
+
+## Completion update - 6 October 2026, 22:04 IST
+
+This update supersedes the earlier pending human-assisted checks above.
+The user completed Managed Turnstile, and root submitted the normal public review form.
+The success message, public review and summary verified publication of the clearly labelled
+four-star test (ID bb294afa-f29c-470f-a631-d31d2ce7c3f3).
+The user completed the final email-code-only Access login. Root removed the same review
+through the normal 360px mobile admin UI at 16:34:08 UTC (22:04:08 IST).
+The private audit records kaushalkhamar96@gmail.com, visible -> removed and the removal reason.
+No mobile horizontal overflow occurred.
+
+A fresh public browser page and API request verified HTTP 200, reviews [], nextCursor null,
+count 0 and average null. The public UI says no reviews yet. All three test records remain
+removed in the private audit; none is a customer endorsement.
+Final admin/public screenshots: production-full-flow-admin.png and production-full-flow-public.png
+in the account-artifacts directory, with copies in Windows output/jija.
+No code or deployment change was needed for this final verification.
