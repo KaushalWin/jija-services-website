@@ -1,2 +1,10 @@
 dist/
 .dist-build.*
+
+node_modules/
+.worker-test/
+.worker-dry-run/
+.review-qa/
+.wrangler/
+.dev.vars
+.dev.vars.*
