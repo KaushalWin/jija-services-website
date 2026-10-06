@@ -33,7 +33,7 @@ Local anonymous CSP browser fixture passed: exact analytics script/report origin
 PLAYWRIGHT_CHROMIUM_PATH=/usr/bin/chromium npm exec --yes --package=node@22 -- node tests/csp-analytics.mjs
 ```
 
-At this evidence commit, the narrow correction is ready for root deployment; it is not yet independently verified live. After deployment, only a relevant analytics/API/page smoke check is needed; repeating all 74 dialog opens is unnecessary unless new changes warrant it.
+Root deployed the narrow correction and reported final Worker version `6f27b77b-5c68-46c8-81e8-244e3d41672a`. The brief independent live smoke below verifies deployed public CSP and customer functionality. Repeating all 74 dialog opens was unnecessary because the final change only adds analytics CSP origins.
 
 ## Root-reported account/admin results and remaining limits
 
@@ -42,3 +42,21 @@ Root separately authenticated to admin with the existing Cloudflare identity and
 **Public review submission did not complete end-to-end**: actual Managed Turnstile requested the human verification challenge, which was not automated or bypassed. Local Worker/D1 and form fixtures cover challenge validation/submission behavior, but do not establish a successful production human submission.
 
 **Email-code login did not complete end-to-end**: root reported delivery works, but the connector withheld the OTP. Existing Cloudflare identity authentication was used for the admin tests. Root coordinates restoring the intended email-OTP-only Access policy and signing out; this document does not claim that restoration or logout has finished.
+
+## Final release public smoke
+
+Anonymous live desktop1440/mobile360 smoke finished at 2026-10-06T16:10:48.786Z with no route fixtures, account profile, review write, or challenge interaction:
+
+- Homepage returned200 and deployed CSP contains both exact analytics origins. No analytics CSP rejections or JavaScript page errors.
+- Public reviewAPI returned200 with `reviews:[]`, `nextCursor:null`, count0 and average null; empty UI state verified at both sizes.
+- All37 product cards remain present; all four festival posters loaded; mobile menu/festival navigation works; no horizontal overflow.
+- Turnstile stayed unloaded because the review form was not opened. No review POST or account operation occurred.
+- **Analytics end-to-end loading remains unverified on this Linux host**: its existing resolver maps both `static.cloudflareinsights.com` and `cloudflareinsights.com` to `0.0.0.0`, and the browser reports `net::ERR_CONNECTION_REFUSED`. A read-only `getent ahostsv4` check confirmed both mappings; `curl` also could not connect. This is a local DNS filter/network block rather than a remaining CSP rejection. No DNS/filter change or bypass was attempted. Local CSP fixtures previously verified allowed origins and blocked unrelated origins.
+
+Final evidence: `.review-qa/production/final-smoke.json`, `.review-qa/production-smoke.log`, `.review-qa/production/final-festivals-360.png`, and `final-reviews-360.png`. The report separately marks `publicSmokePassed:true` and `analyticsEndToEndVerified:false`.
+
+```
+PLAYWRIGHT_CHROMIUM_PATH=/usr/bin/chromium npm exec --yes --package=node@22 -- node tests/production-smoke.mjs
+```
+
+Public Managed Turnstile human submission and email-OTP completion retain the limitations described above. Root handles final account policy/session state and release push; the delegated browser made no account or DNS changes.
