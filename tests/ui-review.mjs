@@ -8,8 +8,8 @@ const dist = path.resolve('dist'); await mkdir('.review-qa', { recursive: true }
 const browser = await chromium.launch({ ...(process.env.PLAYWRIGHT_CHROMIUM_PATH ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH } : { channel: 'chromium' }), headless: true, chromiumSandbox: true });
 let count = 0;
 try {
-  for (const [label, viewport] of [['desktop', { width: 1440, height: 1000 }], ['mobile', { width: 360, height: 800 }]]) {
-    const context = await browser.newContext({ viewport }); const page = await context.newPage();
+  for (const [label, viewport] of [['desktop', { width: 1440, height: 1000 }], ['mobile', { width: 360, height: 800 }], ['desktop-expired', { width: 1440, height: 1000 }], ['mobile-expired', { width: 360, height: 800 }]]) {
+    const context = await browser.newContext({ viewport }); const page = await context.newPage(); await page.clock.install({time:new Date(label.includes("expired") ? "2026-11-05T12:00:00Z" : "2026-10-15T12:00:00Z")});
     let postCount = 0; const posted = []; let release; let mode = 'hold';
     await page.route('https://challenges.cloudflare.com/**', route => route.fulfill({ contentType: 'text/javascript', body: 'window.turnstile={render:(target,options)=>{document.querySelector(target).textContent="Verification preview (test fixture)"; window.__fixtureOptions=options; options.callback("fixture-token");return 1;},reset:()=>window.__fixtureOptions.callback("fresh-fixture-token")};' }));
     await page.route('https://jijaservices.com/**', async route => {

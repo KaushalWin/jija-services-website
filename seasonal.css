@@ -1,0 +1,109 @@
+/* Scoped presentation: removing the date-controlled attribute restores baseline styling. */
+html[data-seasonal-theme="halloween"]{--ink:#092534;--green:#934008;--cream:#fff8ed;--paper:#fffdf7;--lime:#efc490;--orange:#b84908;--line:#dfc9b0;--focus:#0064b8;background:#fff8ed}
+html[data-seasonal-theme] body{background:#fff8ed}
+html[data-seasonal-theme] .theme-default{display:none}
+html[data-seasonal-theme] .theme-seasonal{display:block}
+html[data-seasonal-theme] .announcement{background:#071f2d;color:#fff7e8;border-bottom:2px solid #b84908}
+html[data-seasonal-theme] .site-header{background:#fff8edf5;border-color:#ddcbb7}
+html[data-seasonal-theme] nav a{display:inline-flex;align-items:center;min-height:44px}
+html[data-seasonal-theme] .nav-cta{background:#b84908;color:#fff7e8;border-color:#b84908}
+html[data-seasonal-theme] .menu{min-height:44px;min-width:44px;color:#092534}
+html[data-seasonal-theme] .hero{position:relative;isolation:isolate;display:block;min-height:730px;background:#071f2d;color:#fff7e8;padding:48px max(5vw,24px) 42px}
+html[data-seasonal-theme] .hero-copy{position:relative;z-index:2;max-width:min(52%,690px)}
+html[data-seasonal-theme] .hero h1{font-size:clamp(48px,5.2vw,72px);line-height:1.04;max-width:640px;text-wrap:balance}
+html[data-seasonal-theme] .hero h1 em{color:#ffc280}
+html[data-seasonal-theme] .hero .eyebrow{color:#ffc280}
+html[data-seasonal-theme] .hero .lead{font-size:18px;line-height:1.65;color:#fff1da;max-width:590px}
+html[data-seasonal-theme] .hero-tagline,html[data-seasonal-theme] .hero-tagline strong,html[data-seasonal-theme] .hero-protection-label,html[data-seasonal-theme] .catalog-count-promise,html[data-seasonal-theme] .catalog-count-promise strong{color:#f7dfba}
+html[data-seasonal-theme] .hero-protection-label span{background:#31574b;color:#fff7e8}
+html[data-seasonal-theme] .hero .actions{flex-wrap:wrap}
+html[data-seasonal-theme] .hero .secondary{border-color:#edc89c;color:#fff7e8;background:#071f2dba}
+html[data-seasonal-theme] .proof{gap:18px;flex-wrap:wrap;color:#fff1da}
+html[data-seasonal-theme] .proof li:before{color:#ffc280}
+html[data-seasonal-theme] .halloween-hero-scene{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+html[data-seasonal-theme] .halloween-hero-scene img{width:100%;height:100%;object-fit:cover;object-position:right center;display:block}
+html[data-seasonal-theme] .halloween-hero-scene:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#071f2d 0%,#071f2df5 22%,#071f2dbe 43%,transparent 65%)}
+html[data-seasonal-theme] .button{min-height:44px;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font:700 14px system-ui}
+html[data-seasonal-theme] .primary{background:#b84908;color:#fff7e8;border:1px solid #b84908}
+html[data-seasonal-theme] .secondary{background:transparent;border-color:#092534;color:#092534}
+html[data-seasonal-theme] .primary:hover,html[data-seasonal-theme] .nav-cta:hover{background:#8c3605}
+html[data-seasonal-theme] .secondary:hover{background:#ead8bf}
+html[data-seasonal-theme] .hero .secondary:hover{background:#244151}
+html[data-seasonal-theme] a:focus-visible,html[data-seasonal-theme] button:focus-visible,html[data-seasonal-theme] input:focus-visible,html[data-seasonal-theme] textarea:focus-visible,html[data-seasonal-theme] select:focus-visible{outline:3px solid #0064b8;outline-offset:4px}
+html[data-seasonal-theme] .hero a:focus-visible,html[data-seasonal-theme] .pack-options a:focus-visible,html[data-seasonal-theme] .contact a:focus-visible{outline-color:#ffc280}
+html[data-seasonal-theme] button:disabled,html[data-seasonal-theme] input:disabled,html[data-seasonal-theme] textarea:disabled,html[data-seasonal-theme] select:disabled{background:#e3d9cd;color:#39464d;border-color:#ac9b89;cursor:wait;opacity:1}
+html[data-seasonal-theme] .occasion-banner{background:#fff8ed url('assets/seasonal/autumn-corner.svg') right top/260px auto no-repeat;border-bottom:1px solid #dfc9b0}
+html[data-seasonal-theme] .occasion-copy>p:not(.eyebrow){color:#45545a}
+html[data-seasonal-theme] .occasion-visual img{border:7px solid #fffdf7;outline:1px solid #dfc9b0;box-shadow:0 18px 35px #071f2d20}
+html[data-seasonal-theme] .occasion-visual figcaption{color:#45545a}
+html[data-seasonal-theme] .pack-options{background:#071f2d;color:#fff7e8;border-color:#233b49}
+html[data-seasonal-theme] .pack-copy>p:not(.eyebrow){color:#f4e4cf}
+html[data-seasonal-theme] .pack-copy .eyebrow,html[data-seasonal-theme] .pack-copy .pack-pricing{color:#ffc280}
+html[data-seasonal-theme] .pack-highlight-grid article,html[data-seasonal-theme] .pack-highlight-grid article:last-child{background:#fff8ed;color:#092534;border-color:#e8b276}
+html[data-seasonal-theme] .pack-highlight-grid b,html[data-seasonal-theme] .pack-highlight-grid article:last-child b,html[data-seasonal-theme] .pack-highlight-grid span,html[data-seasonal-theme] .pack-highlight-grid article:last-child span{color:#092534}
+html[data-seasonal-theme] .pack-highlight-grid .pack-best-price{background:#f9a34e;color:#092534;border-color:#fff8ed}
+html[data-seasonal-theme] .eco-solutions{background:#123e33 url('assets/seasonal/autumn-corner.svg') right top/320px auto no-repeat}
+html[data-seasonal-theme] .eco-solutions .eyebrow{color:#ffcc8b}
+html[data-seasonal-theme] .eco-solutions .audience-list li{background:#fff8ed;border-color:#efc490;color:#092534}
+html[data-seasonal-theme] .eco-solutions:before,html[data-seasonal-theme] .eco-solutions:after{display:none}
+html[data-seasonal-theme] .eco-feature{background:#fff8ed;border-color:#efc490;color:#092534}
+html[data-seasonal-theme] .healthcare-solutions{background:#f4eee4;border-color:#dfc9b0}
+html[data-seasonal-theme] .healthcare-solutions h2{color:#092534}
+html[data-seasonal-theme] .healthcare-plus{background:#092534;color:#fff8ed}
+html[data-seasonal-theme] .healthcare-solutions .eyebrow{color:#934008}
+html[data-seasonal-theme] .ppe-product-strip figure{background:#fff;border-color:#d29e68;border-top:3px solid #b84908}
+html[data-seasonal-theme] .ppe-product-strip img{background:#fff}
+html[data-seasonal-theme] .ppe-product-strip figcaption{color:#092534}
+html[data-seasonal-theme] .healthcare-solutions .audience-list li{background:#fffdf7;border-color:#dfc9b0}
+html[data-seasonal-theme] .confirmed-ranges{background:#eadfce;color:#253e47}
+html[data-seasonal-theme] .safety-note{border-color:#b84908;color:#253e47}
+html[data-seasonal-theme] .festival-promotions{background:#fff8ed url('assets/seasonal/autumn-corner.svg') right top/350px auto no-repeat}
+html[data-seasonal-theme] .festival-heading h2{color:#092534}
+html[data-seasonal-theme] .festival-emblem{background:#071f2d;color:#fff8ed;border-color:#d6924a}
+html[data-seasonal-theme] .festival-emblem em,html[data-seasonal-theme] .festival-emblem-star{color:#ffcc8b}
+html[data-seasonal-theme] .festival-collection-label{border-color:#bd9872;color:#45545a}
+html[data-seasonal-theme] .festival-card{background:#fffdf7;border-color:#ddc3a4;box-shadow:0 10px 25px #071f2d10}
+html[data-seasonal-theme] .festival-card-halloween{border:2px solid #b84908;background:#f7e6cb}
+html[data-seasonal-theme] .festival-poster-image{background:#e9dcc8}
+html[data-seasonal-theme] .festival-download{color:#092534;border-color:#092534}
+html[data-seasonal-theme] .festival-planning{background:#071f2d;color:#fff8ed}
+html[data-seasonal-theme] .festival-planning p{color:#f6e1c4}
+html[data-seasonal-theme] .festival-planning .button{background:#f9a34e;color:#092534}
+html[data-seasonal-theme] .range,html[data-seasonal-theme] .values,html[data-seasonal-theme] .marketplaces{background:#f4eee4}
+html[data-seasonal-theme] .range-grid article,html[data-seasonal-theme] .values-grid article{background:#fffdf7;border-color:#dfc9b0;border-top:3px solid #b84908}
+html[data-seasonal-theme] .range-card-image,html[data-seasonal-theme] .range-paper-icon{background:#fff}
+html[data-seasonal-theme] .value-icon{background:#f5dfbd;color:#934008}
+html[data-seasonal-theme] .values-close{background:#071f2d;color:#fff8ed}
+html[data-seasonal-theme] .catalog-download{background:#f4e4ca;border-color:#d8b78d}
+html[data-seasonal-theme] .shop-section{background:#fff8ed}
+html[data-seasonal-theme] .product{border-color:#dfc9b0;background:#fffdf7}
+html[data-seasonal-theme] .product-visual{background:#fff}
+html[data-seasonal-theme] .badge{background:#fff8ed;color:#092534}
+html[data-seasonal-theme] .filters button{min-height:44px;color:#092534;background:#fffdf7;border-color:#bda890}
+html[data-seasonal-theme] .filters button.active{background:#092534;color:#fff8ed;border-color:#092534}
+html[data-seasonal-theme] .search input{background:#fffdf7;border-color:#bda890}
+html[data-seasonal-theme] .about{background:#fff8ed}
+html[data-seasonal-theme] .about-mark{background:#071f2d url('assets/seasonal/autumn-corner.svg') right top/250px auto no-repeat;border:1px solid #c58e58}
+html[data-seasonal-theme] .about-logo{background:#fff8ed;border-radius:8px;padding:8px}
+html[data-seasonal-theme] .marketplaces span{background:#fffdf7;border-color:#dfc9b0}
+html[data-seasonal-theme] .reviews-section{background:#fff8ed;border-color:#dfc9b0}
+html[data-seasonal-theme] .review-list article{background:#fffdf7;border-color:#dfc9b0;border-top:3px solid #b84908}
+html[data-seasonal-theme] .review-stars{color:#82510d}
+html[data-seasonal-theme] .review-form{background:#f1e5d2;border-color:#ccaa83}
+html[data-seasonal-theme] .review-form input,html[data-seasonal-theme] .review-form textarea,html[data-seasonal-theme] .review-form select{border-color:#ab8863;color:#092534;background:#fffdf7;min-height:44px}
+html[data-seasonal-theme] .review-privacy,html[data-seasonal-theme] #review-status{color:#314951}
+html[data-seasonal-theme] .contact{background:#071f2d url('assets/seasonal/autumn-corner.svg') right top/300px auto no-repeat;color:#fff8ed;border:1px solid #b2773c}
+html[data-seasonal-theme] .contact .eyebrow{color:#ffc280}
+html[data-seasonal-theme] .contact-actions a{background:#fff8ed;color:#092534;border:1px solid #efc490}
+html[data-seasonal-theme] footer{background:#071f2d;color:#f4dfc4;border-top:1px solid #b2773c}
+html[data-seasonal-theme] .footer-brand{color:#ffcc8b}
+html[data-seasonal-theme] #product-dialog{background:#fff8ed;color:#092534;border:1px solid #ccaa83}
+html[data-seasonal-theme] dialog::backdrop{background:#071f2dc9}
+html[data-seasonal-theme] .dialog-close{width:44px;height:44px;background:#092534;color:#fff8ed;z-index:2}
+html[data-seasonal-theme] .dialog-grid>.dialog-visuals{background:#eaddc9}
+html[data-seasonal-theme] .dialog-grid dt{color:#934008}
+html[data-seasonal-theme] .confirmation-note{background:#f1e5d2;border-color:#b84908}
+@media(max-width:1100px){html[data-seasonal-theme] .hero{min-height:800px}html[data-seasonal-theme] .hero-copy{max-width:58%}html[data-seasonal-theme] .hero h1{font-size:58px}}
+@media(max-width:900px){html[data-seasonal-theme] .hero{display:flex;flex-direction:column;padding:48px 24px 0;gap:20px;min-height:0}html[data-seasonal-theme] .hero-copy{max-width:680px;width:100%}html[data-seasonal-theme] .hero h1{font-size:clamp(44px,8vw,66px);max-width:620px}html[data-seasonal-theme] .halloween-hero-scene{position:relative;inset:auto;width:calc(100% + 48px);height:440px;margin:0 -24px}html[data-seasonal-theme] .halloween-hero-scene img{object-position:right center}html[data-seasonal-theme] .halloween-hero-scene:after{background:linear-gradient(180deg,#071f2d 0%,transparent 30%)}html[data-seasonal-theme] .site-header nav{background:#fff8ed}html[data-seasonal-theme] .site-header nav a{width:100%;min-height:44px}}
+@media(max-width:600px){html[data-seasonal-theme] .hero{padding:38px 20px 0;gap:0}html[data-seasonal-theme] .hero h1{font-size:clamp(42px,12vw,58px);line-height:1.06}html[data-seasonal-theme] .hero .lead{font-size:16px}html[data-seasonal-theme] .hero .actions{margin:24px 0}html[data-seasonal-theme] .halloween-hero-scene{height:320px;width:calc(100% + 40px);margin:4px -20px 0}html[data-seasonal-theme] .halloween-hero-scene img{object-position:85% center}html[data-seasonal-theme] .proof{gap:8px;margin-bottom:8px}html[data-seasonal-theme] .festival-promotions{background-size:230px auto}html[data-seasonal-theme] .occasion-visual img{border-width:4px}html[data-seasonal-theme] .festival-planning .button{width:100%}}
+@media(prefers-reduced-motion:reduce){html[data-seasonal-theme] *,html[data-seasonal-theme] *:before,html[data-seasonal-theme] *:after{scroll-behavior:auto;transition:none;animation:none}}

@@ -5,7 +5,7 @@ import { mkdir,writeFile } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 const out='.review-qa/production';await mkdir(out,{recursive:true});
 const resolverEvidence=Object.fromEntries(['static.cloudflareinsights.com','cloudflareinsights.com'].map(host=>[host,execFileSync('getent',['ahostsv4',host],{encoding:'utf8'}).trim().split(/\s+/)[0]]));
-const report={started:new Date().toISOString(),reportedWorkerVersion:'6f27b77b-5c68-46c8-81e8-244e3d41672a',fixtures:false,viewports:[],reviews:null,publicSmokePassed:false,analyticsEndToEndVerified:false,analyticsResolverEvidence:resolverEvidence};
+const report={started:new Date().toISOString(),reportedWorkerVersion:process.env.RELEASE_WORKER_VERSION||null,fixtures:false,viewports:[],reviews:null,publicSmokePassed:false,analyticsEndToEndVerified:false,analyticsResolverEvidence:resolverEvidence};
 const browser=await chromium.launch({executablePath:process.env.PLAYWRIGHT_CHROMIUM_PATH||'/usr/bin/chromium',headless:true,chromiumSandbox:true});
 try{
  for(const width of [1440,360]){
@@ -26,10 +26,10 @@ try{
   await page.locator('#review-summary').filter({hasText:'No reviews yet'}).waitFor();assert.equal(await page.locator('#review-list article').count(),0);assert.equal(await page.locator('script[src*="challenges.cloudflare.com"]').count(),0);
   if(width===360){await page.locator('.menu').click();await page.locator('#nav a[href="#seasonal-events"]').click();assert.equal(await page.locator('.menu').getAttribute('aria-expanded'),'false');assert.equal(new URL(page.url()).hash,'#seasonal-events');}
   for(const image of await page.locator('.festival-poster-image img').all())await image.scrollIntoViewIfNeeded();
-  await page.waitForFunction(()=>Array.from(document.querySelectorAll('.festival-poster-image img')).every(image=>image.complete&&image.naturalWidth>0));assert.equal(await page.locator('.festival-card').count(),4);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+  await page.waitForFunction(()=>Array.from(document.querySelectorAll('.festival-poster-image img')).every(image=>image.complete&&image.naturalWidth>0));assert.equal(await page.locator('.festival-card').count(),5);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   if(width===360){await page.locator('.site-header').evaluate(header=>header.remove());await page.locator('#seasonal-events').screenshot({path:out+'/final-festivals-360.png'});await page.locator('#reviews').screenshot({path:out+'/final-reviews-360.png'});}
   assert.deepEqual(errors,[]);assert.deepEqual(blocked,[]);assert.deepEqual(reviewWrites,[]);
-  report.viewports.push({width,analyticsResponses:analytics,analyticsFailures,analyticsScriptLoaded:analyticsLoaded,analyticsCspErrors:blocked,pageErrors:errors,reviewWrites,products:37,festivalPosters:4,horizontalOverflow:false});await context.close();
+  report.viewports.push({width,analyticsResponses:analytics,analyticsFailures,analyticsScriptLoaded:analyticsLoaded,analyticsCspErrors:blocked,pageErrors:errors,reviewWrites,products:37,festivalPosters:5,horizontalOverflow:false});await context.close();
  }
  report.publicSmokePassed=true;report.analyticsEndToEndVerified=report.viewports.every(item=>item.analyticsScriptLoaded);report.analyticsLimitation=report.analyticsEndToEndVerified?null:'Local resolver maps both analytics domains to0.0.0.0; beacon fetch refused. Deployed CSP origins verified and no analytics CSP errors. No DNS/filter changes made.';report.finished=new Date().toISOString();await writeFile(out+'/final-smoke.json',JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report,null,2));
 }catch(error){report.finished=new Date().toISOString();report.failure=error.message;await writeFile(out+'/final-smoke.json',JSON.stringify(report,null,2)+'\n');throw error;}
