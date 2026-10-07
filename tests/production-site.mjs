@@ -18,8 +18,8 @@ try {
   const apiResponse=await context.request.get(report.origin+'/api/reviews?limit=20');assert.equal(apiResponse.status(),200);const reviews=await apiResponse.json();assert.ok(Array.isArray(reviews.reviews));assert.ok(Number.isInteger(reviews.summary.count));assert.ok(reviews.reviews.length<=20);report.checks++;
   report.reviewRead={status:200,count:reviews.summary.count,returned:reviews.reviews.length,average:reviews.summary.average};
   await page.locator('#review-summary').filter({hasText:/No reviews yet|customer review/}).waitFor();assert.equal(await page.locator('script[src*="challenges.cloudflare.com"]').count(),0);report.checks++;
-  for(const image of await page.locator('main img').all())await image.scrollIntoViewIfNeeded();
-  await page.waitForFunction(()=>Array.from(document.querySelectorAll('main img')).every(image=>image.complete&&image.naturalWidth>0));report.checks++;
+  for(const image of await page.locator('main img:visible').all())await image.scrollIntoViewIfNeeded();
+  await page.waitForFunction(()=>Array.from(document.querySelectorAll('main img')).filter(image=>image.getClientRects().length>0).every(image=>image.complete&&image.naturalWidth>0));report.checks++;
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);report.checks++;
   assert.deepEqual(await page.locator('main section').evaluateAll(sections=>sections.filter(section=>section.getBoundingClientRect().right>innerWidth+1||section.getBoundingClientRect().left< -1).map(section=>section.id||section.className)),[]);report.checks++;
   if(width<900){await page.locator('.menu').click();assert.equal(await page.locator('.menu').getAttribute('aria-expanded'),'true');await page.locator('#nav a[href="#seasonal-events"]').click();assert.equal(await page.locator('.menu').getAttribute('aria-expanded'),'false');assert.equal(new URL(page.url()).hash,'#seasonal-events');report.checks++;}

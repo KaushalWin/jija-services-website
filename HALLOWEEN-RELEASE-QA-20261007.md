@@ -37,3 +37,11 @@ Self-review found and fixed poster numbering after moving Halloween first. Publi
 Agent-owned implementation: `index.html`, `styles.css`, `seasonal.css`, `seasonal-theme.js`, `assets/seasonal/autumn-corner.svg`, `scripts/build-static.sh`, `.gitattributes`, `tests/{visual-site,ui-review,production-site,production-smoke}.mjs`, this evidence note.
 
 Root-provided assets: revised business banner PNG, Halloween hero WebP, Halloween poster WebP/PDF, and updated business-card PNG/PDF. These were preserved. Review backend/auth source was not changed. No agent commit or staging occurred; root handles the final combined asset review, commit and deployment.
+
+## Root release verification
+
+Root independently reviewed the actual desktop/mobile hero, complete mobile layout, festival collection, packs/delivery, healthcare, eco section, product dialog and review fixture styling. Deployed source commit 3193627; live Worker version 8fb7507e-da4d-4da8-82e8-8c32ca626a38 on 7 October 2026.
+
+Anonymous production test passed 106 checks on desktop/mobile: all 37 product dialogs, images, navigation/search/filter, no page errors or overflow, and all poster/catalog/business-card downloads matching source SHA256. Smoke test passed with five posters and zero public test reviews. Retired priced poster URL returns 404. Production test was corrected to inspect visible images, since the original hero is intentionally hidden during the active seasonal presentation. This changes only test code. Analytics end-to-end cannot be verified because the Linux resolver blocks analytics domains; storefront functionality and deployed CSP checks passed.
+
+Print card QR decoded correctly at 600 and 150 DPI. Temporary Wrangler OAuth credential was logged out after deployment. Theme ends 4 November 2026 at 21:00 IST.
