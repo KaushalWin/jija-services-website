@@ -7,8 +7,16 @@ const dist = path.resolve('dist');
 await mkdir('.review-qa', { recursive: true });
 const browser = await chromium.launch({ executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH || '/usr/bin/chromium', headless: true, chromiumSandbox: true });
 let checks = 0;
-const expectedPosters = ['festival-summer-original.jpg', 'hot-cups-original.jpg', 'business-original.jpg', 'festival-sale.jpg'];
+const expectedPosters = ['festival-summer-v2.webp', 'hot-cups-v2.webp', 'business-v2.webp', 'general-festival-v2.webp'];
+const retiredPosters = ['festival-summer-original.jpg', 'hot-cups-original.jpg', 'business-original.jpg', 'festival-sale.jpg'];
+
 try {
+  for (const filename of retiredPosters) {
+    assert.ok((await readFile('assets/promotions/' + filename)).length > 1000, 'Preserve source artwork');
+    await assert.rejects(readFile('dist/assets/promotions/' + filename), { code: 'ENOENT' }, 'Retired priced poster must not be published');
+    for (const pageFile of ['dist/index.html', 'dist/pilot-2/index.html']) assert.ok(!(await readFile(pageFile, 'utf8')).includes(filename));
+    checks++;
+  }
   for (const width of [1440, 1024, 768, 360, 320]) {
     const context = await browser.newContext({ viewport: { width, height: 900 }, reducedMotion: 'reduce' });
     const page = await context.newPage(); const errors = []; const missing = [];
@@ -34,6 +42,7 @@ try {
     const overflow = await page.locator('main section').evaluateAll(sections => sections.filter(section => section.getBoundingClientRect().right > innerWidth + 1 || section.getBoundingClientRect().left < -1).map(section => section.id || section.className));
     assert.deepEqual(overflow, [], `Off-screen section at ${width}`); checks++;
     const cards = page.locator('.festival-card'); assert.equal(await cards.count(), 4); checks++;
+    assert.doesNotMatch(await page.locator('#seasonal-events').innerText(), /[$€£]|\b(?:price|prices|pricing|sale|savings|limited stock|original)\b/i); checks++;
     for (let i = 0; i < 4; i++) {
       const card = cards.nth(i);
       const image = card.locator('img'); const imageLink = card.locator('.festival-poster-image'); const download = card.locator('a[download]');
@@ -73,5 +82,5 @@ try {
     }
     await context.close();
   }
-  console.log(`Anonymous whole-site visual checks passed: ${checks}. Viewports 1440/1024/768/360/320. Original posters, all images, catalog search/dialog, navigation, and overflow checked. No live account or preview server.`);
+  console.log(`Anonymous whole-site visual checks passed: ${checks}. Viewports 1440/1024/768/360/320. Revised posters, retired-asset exclusion, all images, catalog search/dialog, navigation, and overflow checked. No live account or preview server.`);
 } finally { await browser.close(); }

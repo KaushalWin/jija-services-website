@@ -45,7 +45,7 @@ try {
   if(width===1440){
    const links=await page.locator('.festival-poster-grid a[download],.catalog-actions a[download],.dialog-contact-card').evaluateAll(anchors=>anchors.map(anchor=>anchor.href));
    const paths=[...new Set([...links,report.origin+'/assets/brand/jija-business-card.pdf'])];
-   for(const url of paths){const result=await context.request.get(url);assert.equal(result.status(),200);const body=await result.body();const pathname=new URL(url).pathname;const expected=await readFile('.'+pathname);const digest=createHash('sha256').update(body).digest('hex');assert.equal(digest,createHash('sha256').update(expected).digest('hex'));const mime=result.headers()['content-type'];assert.match(mime,pathname.endsWith('.pdf')?/application\/pdf/:/image\/jpeg/);assert.ok(body.length>1000);report.downloads.push({pathname,status:200,mime,bytes:body.length,sha256:digest,originalMatches:true});report.checks++;}
+   for(const url of paths){const result=await context.request.get(url);assert.equal(result.status(),200);const body=await result.body();const pathname=new URL(url).pathname;const expected=await readFile('.'+pathname);const digest=createHash('sha256').update(body).digest('hex');assert.equal(digest,createHash('sha256').update(expected).digest('hex'));const mime=result.headers()['content-type'];assert.match(mime,pathname.endsWith('.pdf')?/application\/pdf/:pathname.endsWith('.webp')?/image\/webp/:/image\/jpeg/);assert.ok(body.length>1000);report.downloads.push({pathname,status:200,mime,bytes:body.length,sha256:digest,originalMatches:true});report.checks++;}
   }
   await context.close();
  }
