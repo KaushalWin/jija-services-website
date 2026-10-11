@@ -1,1 +1,53 @@
-*{box-sizing:border-box}body{font-family:system-ui,sans-serif;color:#173e2d;background:#f4f8f5;margin:0}main{max-width:980px;margin:auto;padding:32px 20px}header{border-bottom:1px solid #cfdfd4;padding-bottom:24px}header p{line-height:1.6}header a{margin-right:24px;color:#07543a}h1{font-size:2rem}h2{font-size:1.15rem}article{background:#fff;border:1px solid #cfdfd4;border-radius:12px;padding:24px;margin:20px 0;overflow-wrap:anywhere}.comment,.history p{white-space:pre-wrap;line-height:1.6}.tools,.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:18px 0}label{display:block;font-weight:600;margin-bottom:8px}textarea,select,button{font:inherit;border:1px solid #8aa695;border-radius:6px;padding:10px}textarea{width:100%;resize:vertical}button{background:#fff;color:#07543a;cursor:pointer}button:disabled{opacity:.55;cursor:default}button:focus-visible,textarea:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #876a12;outline-offset:3px}.history{border-left:3px solid #cfdfd4;padding-left:14px}[hidden]{display:none!important}#status{min-height:1.5em;color:#603719}
+*{box-sizing:border-box}
+:root{color-scheme:light}
+body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#173e2d;background:#f4f8f5;margin:0;font-size:17px;line-height:1.55}
+main{max-width:1000px;margin:auto;padding:clamp(18px,4vw,42px)}
+header{border-bottom:2px solid #cfdfd4;padding-bottom:24px}
+.brand{font-weight:750;color:#07543a;margin:0}
+.intro{max-width:760px}
+nav{display:flex;flex-wrap:wrap;gap:14px 26px;margin-top:18px}
+a{color:#07543a;font-weight:650}
+h1{font-size:clamp(2rem,5vw,2.65rem);line-height:1.12;margin:.35em 0}
+h2{font-size:1.35rem;line-height:1.25;margin:.1em 0}
+h3{font-size:1.18rem;line-height:1.3;margin:0 0 8px}
+article{background:#fff;border:1px solid #bdcfc2;border-radius:14px;padding:clamp(16px,3vw,28px);margin:20px 0;overflow-wrap:anywhere;box-shadow:0 2px 8px #173e2d0b}
+.review-meta{color:#40594c;margin:8px 0 18px}
+.comment{white-space:pre-wrap;line-height:1.65}
+.reply-panel{border:2px solid #c5d9ca;border-radius:12px;background:#f7fbf8;padding:18px;margin-top:22px}
+.reply-panel>p,.moderation-panel>p{margin:8px 0 14px}
+.published-reply{margin:14px 0;padding:12px 16px;background:#fff;border-left:4px solid #28734f;border-radius:4px}
+.published-reply p{white-space:pre-wrap;margin:4px 0}
+.published-label{font-size:.88rem;font-weight:700;color:#07543a}
+.reply-draft-note{color:#40594c;font-size:.94rem}
+.moderation-panel{border-top:1px solid #cfdfd4;margin-top:24px;padding-top:20px}
+.moderation-note{color:#40594c}
+label{display:block;font-weight:700;margin:16px 0 7px}
+textarea,select,button{font:inherit;border:2px solid #829b8b;border-radius:9px;padding:12px 14px}
+textarea{display:block;width:100%;min-height:112px;resize:vertical;line-height:1.5}
+select{min-height:50px;background:white;max-width:100%}
+button{background:#fff;color:#07543a;cursor:pointer;font-weight:700;min-height:50px}
+button:hover:not(:disabled){background:#edf6ef}
+button:disabled{opacity:.58;cursor:default}
+.primary-action{background:#07543a;color:white;border-color:#07543a}
+.primary-action:hover:not(:disabled){background:#0a6848}
+.danger-action{color:#8b2e22;border-color:#b87368}
+.tools,.controls{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:20px 0}
+.tools label{margin:0}
+#status{min-height:1.6em;color:#603719;font-weight:650}
+.card-status{min-height:1.5em;font-weight:650;margin:10px 0}
+.reply-status{color:#07543a}
+.moderation-status{color:#603719}
+.history{border-left:3px solid #cfdfd4;padding-left:14px}
+.history p{white-space:pre-wrap;line-height:1.55}
+:focus-visible{outline:3px solid #876a12;outline-offset:3px}
+[hidden]{display:none!important}
+@media(max-width:560px){
+  body{font-size:16px}
+  main{padding:18px 14px 32px}
+  .tools{align-items:stretch;flex-direction:column}
+  .tools label{margin:0}
+  .tools select,.tools button,.controls button{width:100%}
+  .controls{flex-direction:column;align-items:stretch}
+  article{padding:16px}
+  .reply-panel{padding:14px}
+}

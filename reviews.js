@@ -26,7 +26,15 @@
     stars.setAttribute('aria-label', `${review.stars} out of 5 stars`);
     const date = element('time', new Date(review.created_at * 1000).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }));
     date.dateTime = new Date(review.created_at * 1000).toISOString();
-    heading.append(date); card.append(heading, stars, element('p', review.comment, 'review-comment')); list.append(card);
+    heading.append(date); card.append(heading, stars, element('p', review.comment, 'review-comment'));
+    if (review.owner_reply) {
+      const ownerReply = element('div', undefined, 'review-owner-reply');
+      ownerReply.setAttribute('aria-label', 'Reply from JIJA Services');
+      ownerReply.append(element('p', 'Reply from JIJA Services', 'review-owner-reply-label'));
+      ownerReply.append(element('p', review.owner_reply, 'review-owner-reply-text'));
+      card.append(ownerReply);
+    }
+    list.append(card);
   }
   async function load(reset = false) {
     more.disabled = true;

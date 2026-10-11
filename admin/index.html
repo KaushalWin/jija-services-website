@@ -1,1 +1,37 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Review moderation | JIJA Services</title><link rel="stylesheet" href="/admin/admin.css"><script src="/admin/admin.js" defer></script></head><body><main><header><p>JIJA Services</p><h1>Review moderation</h1><p>Keep ordinary negative reviews visible. Hide or remove spam, abuse, or content that exposes personal information. Removal preserves the moderation record.</p><a href="https://jijaservices.com/#reviews">View public reviews ↗</a> <a href="/cdn-cgi/access/logout">Sign out</a></header><div class="tools"><label for="visibility">Show</label><select id="visibility"><option value="all">All reviews</option><option value="visible">Visible</option><option value="hidden">Hidden</option><option value="removed">Removed</option></select><button id="refresh" type="button">Refresh</button></div><p id="status" role="status" aria-live="polite">Loading reviews…</p><div id="reviews"></div><button id="more" type="button" hidden>Load more reviews</button></main></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Customer reviews | JIJA Services</title>
+  <link rel="stylesheet" href="/admin/admin.css">
+  <script src="/admin/admin.js" defer></script>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="brand">JIJA Services</p>
+      <h1>Customer reviews</h1>
+      <p class="intro">Read customer feedback, write a public reply, or manage whether a review appears on the website. Replies are shown as “Reply from JIJA Services.”</p>
+      <nav aria-label="Account and website links">
+        <a href="https://jijaservices.com/#reviews">View reviews on the website</a>
+        <a id="sign-out" href="/cdn-cgi/access/logout">Sign out</a>
+      </nav>
+    </header>
+    <section class="tools" aria-label="Review list controls">
+      <label for="visibility">Show reviews</label>
+      <select id="visibility">
+        <option value="all">All reviews</option>
+        <option value="visible">On the website</option>
+        <option value="hidden">Hidden</option>
+        <option value="removed">Removed from website</option>
+      </select>
+      <button id="refresh" type="button">Refresh list</button>
+    </section>
+    <p id="status" role="status" aria-live="polite">Loading reviews…</p>
+    <div id="reviews"></div>
+    <button id="more" type="button" hidden>Load more reviews</button>
+  </main>
+</body>
+</html>

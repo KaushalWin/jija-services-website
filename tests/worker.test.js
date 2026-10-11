@@ -40,13 +40,15 @@ before(async () => {
     }
   }));
   db = await mf.getD1Database('REVIEWS_DB');
-  const schema = await readFile('migrations/0001_reviews.sql', 'utf8');
-  let statement = '';
-  for (const line of schema.split('\n')) {
-    statement += line + '\n';
-    const trigger = statement.trimStart().startsWith('CREATE TRIGGER');
-    if ((trigger && /\bEND;\s*$/.test(statement)) || (!trigger && /;\s*$/.test(statement))) {
-      await db.prepare(statement).run(); statement = '';
+  for (const migration of ['0001_reviews.sql', '0002_owner_replies.sql']) {
+    const schema = await readFile('migrations/' + migration, 'utf8');
+    let statement = '';
+    for (const line of schema.split('\n')) {
+      statement += line + '\n';
+      const trigger = statement.trimStart().startsWith('CREATE TRIGGER');
+      if ((trigger && /\bEND;\s*$/.test(statement)) || (!trigger && /;\s*$/.test(statement))) {
+        await db.prepare(statement).run(); statement = '';
+      }
     }
   }
 });
@@ -156,7 +158,7 @@ test('indexed keyset pagination has no duplicated or missing reviews', async () 
 });
 test('admin HTML, JS, CSS, and API all deny missing/forged authentication', async () => {
   const calls = assetCalls;
-  for (const path of ['/', '/admin/', '/admin/index.html', '/admin/admin.js', '/admin/admin.css', '/api/admin/reviews', '/api/admin/audit']) {
+  for (const path of ['/', '/admin/', '/admin/index.html', '/admin/admin.js', '/admin/admin.css', '/api/admin/reviews', '/api/admin/audit', '/api/admin/reply-audit', '/api/admin/reviews/00000000-0000-4000-8000-000000000001/reply']) {
     assert.equal((await mf.dispatchFetch(ADMIN + path)).status, 403);
     assert.equal((await admin(path, { token: 'forged' })).status, 403);
   }
@@ -167,7 +169,9 @@ test('both allowlisted moderators can access admin page and API', async () => {
     const signed = await token(email);
     const html = await admin('/', { token: signed }); assert.equal(html.status, 200); assert.equal(html.headers.get('cache-control'), 'no-store');
     assert.match(html.headers.get('content-security-policy'), /frame-ancestors 'none'/);
-    assert.equal((await admin('/api/admin/reviews', { token: signed })).status, 200);
+    const listing = await admin('/api/admin/reviews', { token: signed });
+    assert.equal(listing.status, 200);
+    assert.equal((await listing.json()).actor, email);
   }
 });
 test('unapproved email, wrong issuer/audience/signature, expired or missing expiry fail closed', async () => {
@@ -198,6 +202,165 @@ test('moderation is atomic, audited, restores summary, and rejects stale writes'
   const listed = await (await mf.dispatchFetch(PUBLIC + '/api/reviews?limit=20')).json(); assert.ok(!listed.reviews.some(row => row.id === id));
   const retained = await db.prepare('SELECT visibility, comment FROM reviews WHERE id = ?').bind(id).first(); assert.equal(retained.visibility, 'removed'); assert.ok(retained.comment);
 });
+test('owner replies publish, edit, remove, audit, and stay separate from review visibility', async () => {
+  const [id] = await seed(1, 'Reply');
+  await db.prepare('UPDATE reviews SET created_at = 2000000000 WHERE id = ?').bind(id).run();
+  const signed = await token();
+  const replyPath = '/api/admin/reviews/' + id + '/reply';
+  const sendReply = (method, body, origin = ADMIN) => admin(replyPath, {
+    token: signed, method, headers: { 'content-type': 'application/json', origin }, body: JSON.stringify(body)
+  });
+
+  assert.equal((await sendReply('PATCH', { version: 1, reply: 'A thoughtful response to this customer.' }, 'https://attacker.example')).status, 403);
+  assert.equal((await sendReply('PATCH', { version: 1, reply: '   ' })).status, 400);
+  assert.equal((await sendReply('PATCH', { version: 1, reply: 'x'.repeat(1001) })).status, 400);
+  assert.equal((await sendReply('PATCH', { version: 1, reply: 'Bad direction ' + String.fromCodePoint(0x202e) + ' text' })).status, 400);
+
+  const firstReply = 'Thanks for sharing this. <script>alert(1)</script> We are reviewing your feedback.';
+  let response = await sendReply('PATCH', { version: 1, reply: firstReply });
+  assert.equal(response.status, 200);
+  let saved = await response.json();
+  assert.equal(saved.owner_reply, firstReply);
+  assert.equal(saved.visibility, 'visible');
+  assert.equal(saved.version, 2);
+  assert.ok(saved.owner_reply_updated_at);
+  assert.equal((await sendReply('PATCH', { version: 1, reply: 'Stale response.' })).status, 409);
+  const unchanged = await (await sendReply('PATCH', { version: 2, reply: firstReply })).json();
+  assert.equal(unchanged.version, 2);
+
+  let publicListing = await (await mf.dispatchFetch(PUBLIC + '/api/reviews?limit=20')).json();
+  let listed = publicListing.reviews.find(review => review.id === id);
+  assert.equal(listed.owner_reply, firstReply);
+  assert.equal(listed.owner_reply_actor, undefined);
+  const adminListing = await (await admin('/api/admin/reviews?visibility=visible', { token: signed })).json();
+  assert.equal(adminListing.actor, 'jijaservices@gmail.com');
+  assert.equal(adminListing.reviews.find(review => review.id === id).owner_reply, firstReply);
+
+  const history = await (await admin('/api/admin/reply-audit?reviewId=' + id, { token: signed })).json();
+  assert.equal(history.audit.length, 1);
+  assert.equal(history.audit[0].action, 'publish');
+  assert.equal(history.audit[0].actor_email, 'jijaservices@gmail.com');
+  assert.equal(history.audit[0].new_reply, firstReply);
+  assert.equal((await db.prepare('SELECT count(*) AS count FROM moderation_audit WHERE review_id = ?').bind(id).first()).count, 0);
+
+  response = await sendReply('PATCH', { version: 2, reply: 'We have reviewed your feedback and contacted you privately.' });
+  assert.equal(response.status, 200);
+  saved = await response.json();
+  assert.equal(saved.version, 3);
+  assert.equal(saved.visibility, 'visible');
+  assert.equal((await sendReply('DELETE', { version: 2 })).status, 409);
+
+  const hide = await admin('/api/admin/reviews/' + id, { token: signed, method: 'PATCH', headers: { 'content-type': 'application/json', origin: ADMIN }, body: JSON.stringify({ action: 'hide', version: 3, reason: 'Review visibility test' }) });
+  assert.equal(hide.status, 200);
+  publicListing = await (await mf.dispatchFetch(PUBLIC + '/api/reviews?limit=20')).json();
+  assert.ok(!publicListing.reviews.some(review => review.id === id));
+  assert.equal((await sendReply('PATCH', { version: 4, reply: 'Cannot change this while hidden.' })).status, 409);
+  const restore = await admin('/api/admin/reviews/' + id, { token: signed, method: 'PATCH', headers: { 'content-type': 'application/json', origin: ADMIN }, body: JSON.stringify({ action: 'show', version: 4, reason: 'Restore review after check' }) });
+  assert.equal(restore.status, 200);
+  publicListing = await (await mf.dispatchFetch(PUBLIC + '/api/reviews?limit=20')).json();
+  listed = publicListing.reviews.find(review => review.id === id);
+  assert.equal(listed.owner_reply, 'We have reviewed your feedback and contacted you privately.');
+
+  response = await sendReply('DELETE', { version: 5 });
+  assert.equal(response.status, 200);
+  saved = await response.json();
+  assert.equal(saved.owner_reply, null);
+  assert.equal(saved.version, 6);
+  publicListing = await (await mf.dispatchFetch(PUBLIC + '/api/reviews?limit=20')).json();
+  listed = publicListing.reviews.find(review => review.id === id);
+  assert.ok(listed);
+  assert.equal(listed.owner_reply, null);
+
+  const finalHistory = await (await admin('/api/admin/reply-audit?reviewId=' + id, { token: signed })).json();
+  assert.deepEqual(finalHistory.audit.map(row => row.action), ['remove', 'edit', 'publish']);
+  assert.equal(finalHistory.audit[0].old_reply, 'We have reviewed your feedback and contacted you privately.');
+  assert.equal(finalHistory.audit[0].new_reply, null);
+  assert.equal((await db.prepare('SELECT count(*) AS count FROM moderation_audit WHERE review_id = ?').bind(id).first()).count, 2);
+});
+test('concurrent same-version replies and reply-versus-moderation allow one winner each', async () => {
+  const signed = await token();
+  const [replyId] = await seed(1, 'Concurrent reply');
+  const replyPath = '/api/admin/reviews/' + replyId + '/reply';
+  const writeReply = text => admin(replyPath, { token: signed, method: 'PATCH', headers: { 'content-type': 'application/json', origin: ADMIN }, body: JSON.stringify({ version: 1, reply: text }) });
+  const replies = await Promise.all([writeReply('First valid response.'), writeReply('Second valid response.')]);
+  assert.deepEqual(replies.map(response => response.status).sort(), [200, 409]);
+  const savedReply = await db.prepare('SELECT owner_reply, version FROM reviews WHERE id = ?').bind(replyId).first();
+  assert.ok(['First valid response.', 'Second valid response.'].includes(savedReply.owner_reply));
+  assert.equal(savedReply.version, 2);
+  assert.equal((await db.prepare('SELECT count(*) AS count FROM owner_reply_audit WHERE review_id = ?').bind(replyId).first()).count, 1);
+
+  const [raceId] = await seed(1, 'Reply moderation race');
+  const replyWrite = admin('/api/admin/reviews/' + raceId + '/reply', { token: signed, method: 'PATCH', headers: { 'content-type': 'application/json', origin: ADMIN }, body: JSON.stringify({ version: 1, reply: 'Reply won the visibility race.' }) });
+  const hideReview = admin('/api/admin/reviews/' + raceId, { token: signed, method: 'PATCH', headers: { 'content-type': 'application/json', origin: ADMIN }, body: JSON.stringify({ action: 'hide', version: 1, reason: 'Concurrent visibility test' }) });
+  const raced = await Promise.all([replyWrite, hideReview]);
+  assert.deepEqual(raced.map(response => response.status).sort(), [200, 409]);
+  const raceState = await db.prepare('SELECT visibility, version, owner_reply FROM reviews WHERE id = ?').bind(raceId).first();
+  assert.equal(raceState.version, 2);
+  if (raceState.visibility === 'visible') {
+    assert.equal(raceState.owner_reply, 'Reply won the visibility race.');
+    assert.equal((await db.prepare('SELECT count(*) AS count FROM owner_reply_audit WHERE review_id = ?').bind(raceId).first()).count, 1);
+    assert.equal((await db.prepare('SELECT count(*) AS count FROM moderation_audit WHERE review_id = ?').bind(raceId).first()).count, 0);
+  } else {
+    assert.equal(raceState.visibility, 'hidden');
+    assert.equal(raceState.owner_reply, null);
+    assert.equal((await db.prepare('SELECT count(*) AS count FROM owner_reply_audit WHERE review_id = ?').bind(raceId).first()).count, 0);
+    assert.equal((await db.prepare('SELECT count(*) AS count FROM moderation_audit WHERE review_id = ?').bind(raceId).first()).count, 1);
+  }
+});
+
+test('failed reply audit trigger rolls back the reply and version update', async () => {
+  const [id] = await seed(1, 'Audit rollback');
+  const signed = await token();
+  await db.prepare("CREATE TRIGGER test_fail_owner_reply_audit BEFORE INSERT ON owner_reply_audit BEGIN SELECT RAISE(ABORT, 'audit unavailable'); END").run();
+  try {
+    const response = await admin('/api/admin/reviews/' + id + '/reply', { token: signed, method: 'PATCH', headers: { 'content-type': 'application/json', origin: ADMIN }, body: JSON.stringify({ version: 1, reply: 'This must roll back with its audit.' }) });
+    assert.equal(response.status, 503);
+    const state = await db.prepare('SELECT owner_reply, owner_reply_actor, owner_reply_updated_at, version FROM reviews WHERE id = ?').bind(id).first();
+    assert.deepEqual(state, { owner_reply: null, owner_reply_actor: null, owner_reply_updated_at: null, version: 1 });
+    assert.equal((await db.prepare('SELECT count(*) AS count FROM owner_reply_audit WHERE review_id = ?').bind(id).first()).count, 0);
+  } finally {
+    await db.prepare('DROP TRIGGER IF EXISTS test_fail_owner_reply_audit').run();
+  }
+});
+
+test('owner reply migration preserves existing reviews and summary', async () => {
+  const upgradeMf = new Miniflare(convertV4MiniflareOptions({
+    modules: true, scriptPath: '.worker-test/worker.mjs', compatibilityDate: '2026-10-01',
+    d1Databases: ['UPGRADE_DB'], host: '127.0.0.1', port: 0
+  }));
+  try {
+    const upgradeDb = await upgradeMf.getD1Database('UPGRADE_DB');
+    const baseSchema = await readFile('migrations/0001_reviews.sql', 'utf8');
+    let statement = '';
+    for (const line of baseSchema.split('\n')) {
+      statement += line + '\n';
+      const trigger = statement.trimStart().startsWith('CREATE TRIGGER');
+      if ((trigger && /\bEND;\s*$/.test(statement)) || (!trigger && /;\s*$/.test(statement))) {
+        await upgradeDb.prepare(statement).run(); statement = '';
+      }
+    }
+    await upgradeDb.prepare("INSERT INTO reviews(id,submission_key,request_hash,display_name,stars,comment,created_at) VALUES ('upgrade-fixture','upgrade-key','upgrade-hash','Existing customer',4,'Existing review remains unchanged.',1700000000)").run();
+    const before = await upgradeDb.prepare('SELECT id, submission_key, request_hash, display_name, stars, comment, created_at, visibility, version FROM reviews WHERE id = ?').bind('upgrade-fixture').first();
+    const beforeSummary = await upgradeDb.prepare('SELECT total, rating_sum FROM review_summary').first();
+    const replySchema = await readFile('migrations/0002_owner_replies.sql', 'utf8');
+    statement = '';
+    for (const line of replySchema.split('\n')) {
+      statement += line + '\n';
+      const trigger = statement.trimStart().startsWith('CREATE TRIGGER');
+      if ((trigger && /\bEND;\s*$/.test(statement)) || (!trigger && /;\s*$/.test(statement))) {
+        await upgradeDb.prepare(statement).run(); statement = '';
+      }
+    }
+    const after = await upgradeDb.prepare('SELECT id, submission_key, request_hash, display_name, stars, comment, created_at, visibility, version, owner_reply, owner_reply_actor, owner_reply_updated_at FROM reviews WHERE id = ?').bind('upgrade-fixture').first();
+    const afterSummary = await upgradeDb.prepare('SELECT total, rating_sum FROM review_summary').first();
+    assert.deepEqual(Object.fromEntries(Object.keys(before).map(key => [key, after[key]])), before);
+    assert.deepEqual({ owner_reply: after.owner_reply, owner_reply_actor: after.owner_reply_actor, owner_reply_updated_at: after.owner_reply_updated_at }, { owner_reply: null, owner_reply_actor: null, owner_reply_updated_at: null });
+    assert.deepEqual(afterSummary, beforeSummary);
+  } finally {
+    await upgradeMf.dispose();
+  }
+});
+
 test('global cap limits attempts across IPs without a paid service', async () => {
   const responses = await Promise.all(Array.from({ length: 40 }, (_, i) => post({ ...basic, turnstileToken: 'invalid' }, { ip: `198.51.100.${i + 1}` })));
   assert.ok(responses.some(response => response.status === 429));

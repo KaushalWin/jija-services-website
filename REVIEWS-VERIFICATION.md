@@ -19,3 +19,13 @@ Visual artifacts (ignored by Git and excluded from static build):
 - `.review-qa/admin-desktop.png`
 
 Independent review is still required. Actual Access onboarding/application/issuer/AUD, secret provisioning, real domain routing, production D1 migration, real challenge behavior, Free-plan live usage/CPU limits and authenticated moderator login are not verified by local fixtures. Access configuration remains empty and denies administrator access. The coordinator has an outstanding user decision about Access checkout terms/overage authorization. Production must remain on the current website-only release until that configuration and the separate release checks are complete.
+
+## Owner replies source verification — 2026-10-11
+
+This branch adds source-only owner replies to visible reviews. The separate owner-reply migration has not been applied to production, and no deployment, Cloudflare account action, production admin login, or secret access was performed.
+
+- Local workerd and D1 runtime tests: **24/24 passed**. Coverage includes both approved administrator identities in the protected list response, publish/edit/remove, hidden/restored review semantics, stale and concurrent writes, reply-versus-moderation version races, atomic rollback when the reply-audit trigger fails, and migration preservation of existing review rows and summary.
+- Anonymous Playwright fixtures: **45 checks passed** across desktop and mobile viewports. Coverage includes safe public reply rendering, independent reply/moderation controls, actor-scoped session drafts, account switching while a save is in flight, same-card mutation locking during refresh, storage-denied in-memory draft recovery, and recovery when a successful write is followed by a failed list refresh.
+- The public review stylesheet was preserved and extended with reply styles. Screenshots were regenerated locally; all fixture names and text remain synthetic.
+
+The admin list contract returns { actor, reviews, nextCursor, summary }, with actor set from the verified Access email and each row including reply text and its update time. The protected reply endpoints PATCH and DELETE /api/admin/reviews/:id/reply require Access and same-origin writes, compare the current review version, and return { id, visibility, version, owner_reply, owner_reply_updated_at }. GET /api/admin/reply-audit?reviewId=... returns private audit entries to an authenticated administrator.

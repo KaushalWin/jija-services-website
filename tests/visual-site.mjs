@@ -7,7 +7,7 @@ const dist = path.resolve('dist');
 await mkdir('.review-qa', { recursive: true });
 const browser = await chromium.launch({ executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH || '/usr/bin/chromium', headless: true, chromiumSandbox: true });
 let checks = 0;
-const expectedPosters = ['halloween-v2.webp', 'festival-summer-v2.webp', 'hot-cups-v2.webp', 'business-v2.webp', 'general-festival-v2.webp'];
+const expectedPosters = ['halloween-v2.webp', 'festival-summer-v2.webp', 'hot-cups-v2.webp', 'business-v2.webp', 'general-festival-v2.webp', 'navratri-english.webp'];
 const retiredPosters = ['festival-summer-original.jpg', 'hot-cups-original.jpg', 'business-original.jpg', 'festival-sale.jpg'];
 
 try {
@@ -54,14 +54,14 @@ try {
     const intersects = (a,b) => a.x < b.x+b.width && a.x+a.width > b.x && a.y < b.y+b.height && a.y+a.height > b.y;
     assert.equal(intersects(badge,retailText), false, `Badge overlaps Retail text at ${width}`);
     assert.equal(intersects(badge,quantity), false, `Badge overlaps 50 quantity at ${width}`); checks++;
-    const cards = page.locator('.festival-card'); assert.equal(await cards.count(), 5); checks++;
+    const cards = page.locator('.festival-card'); assert.equal(await cards.count(), 6); checks++;
     assert.doesNotMatch(await page.locator('#seasonal-events').innerText(), /[$€£]|\b(?:price|prices|pricing|sale|savings|limited stock|original)\b/i); checks++;
     for (let i = 0; i < expectedPosters.length; i++) {
       const card = cards.nth(i);
       const image = card.locator('img'); const imageLink = card.locator('.festival-poster-image'); const download = card.locator('a[download]');
       assert.equal(await image.getAttribute('src'), `assets/promotions/${expectedPosters[i]}`);
       assert.equal(await imageLink.getAttribute('href'), await image.getAttribute('src'));
-      assert.equal(await download.getAttribute('href'), i === 0 ? 'assets/promotions/halloween-v2.pdf' : await image.getAttribute('src'));
+      assert.equal(await download.getAttribute('href'), i === 0 ? 'assets/promotions/halloween-v2.pdf' : i === 5 ? 'assets/promotions/navratri-english.png' : await image.getAttribute('src'));
       assert.equal(await image.evaluate(element => getComputedStyle(element).objectFit), 'contain');
       const box = await image.boundingBox(); assert.ok(box.width > 100 && box.height >= 280);
       const target = await download.boundingBox(); assert.ok(target.height >= 44); assert.ok((await card.locator(".button").boundingBox()).height >= 44);

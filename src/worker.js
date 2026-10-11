@@ -114,7 +114,7 @@ function cursor(value) {
   } catch { fail(400, 'Invalid page cursor.'); }
 }
 function encodeCursor(row) { return btoa(JSON.stringify([row.created_at, row.id])).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
-async function listReviews(url, db, admin = false) {
+async function listReviews(url, db, admin = false, actor = null) {
   const filter = admin ? (url.searchParams.get('visibility') || 'all') : 'visible';
   if (!['all', 'visible', 'hidden', 'removed'].includes(filter)) fail(400, 'Invalid review filter.');
   const rawLimit = url.searchParams.get('limit') || '10';
@@ -123,13 +123,13 @@ async function listReviews(url, db, admin = false) {
   const where = []; const params = [];
   if (filter !== 'all') { where.push('visibility = ?'); params.push(filter); }
   if (after) { where.push('(created_at, id) < (?, ?)'); params.push(...after); }
-  const columns = 'id, display_name, stars, comment, created_at' + (admin ? ', visibility, version' : '');
+  const columns = 'id, display_name, stars, comment, created_at, owner_reply, owner_reply_updated_at' + (admin ? ', visibility, version' : '');
   const statement = `SELECT ${columns} FROM reviews ${where.length ? 'WHERE ' + where.join(' AND ') : ''} ORDER BY created_at DESC, id DESC LIMIT ?`;
   params.push(limit + 1);
   const { results } = await db.prepare(statement).bind(...params).all();
   const more = results.length > limit; const reviews = results.slice(0, limit);
   const summary = await db.prepare('SELECT total, rating_sum FROM review_summary WHERE singleton = 1').first();
-  return json({ reviews, nextCursor: more ? encodeCursor(reviews.at(-1)) : null, summary: { count: summary.total, average: summary.total ? summary.rating_sum / summary.total : null } });
+  return json({ reviews, nextCursor: more ? encodeCursor(reviews.at(-1)) : null, summary: { count: summary.total, average: summary.total ? summary.rating_sum / summary.total : null }, ...(admin ? { actor } : {}) });
 }
 async function submitReview(request, env) {
   originCheck(request);
@@ -182,6 +182,36 @@ async function moderate(request, env, id, email) {
   if (current.version !== body.version) fail(409, 'This review changed. Refresh before moderating it.');
   return json(current);
 }
+async function manageReply(request, env, id, email, remove = false) {
+  originCheck(request);
+  const db = requireDB(env);
+  if (!UUID.test(id)) fail(404, 'Review not found.');
+  const body = await readJSON(request);
+  if (!Number.isSafeInteger(body.version) || body.version < 1) fail(400, 'A current review version is required.');
+  const current = await db.prepare('SELECT id, visibility, version, owner_reply, owner_reply_updated_at FROM reviews WHERE id = ?').bind(id).first();
+  if (!current) fail(404, 'Review not found.');
+  if (current.version !== body.version) fail(409, 'This review changed. Refresh before changing its reply.');
+  if (current.visibility !== 'visible') fail(409, 'Restore this review to the website before changing its reply.');
+
+  const reply = remove ? null : text(body.reply, 1, 1000, 'Reply');
+  if (current.owner_reply === reply) return json(current);
+  const timestamp = now();
+  const updated = await db.prepare('UPDATE reviews SET owner_reply = ?, owner_reply_actor = ?, owner_reply_updated_at = ?, version = version + 1 WHERE id = ? AND version = ? AND visibility = \'visible\' RETURNING id, visibility, version, owner_reply, owner_reply_updated_at')
+    .bind(reply, email, timestamp, id, body.version).first();
+  if (updated) return json(updated);
+
+  const latest = await db.prepare('SELECT id, visibility, version FROM reviews WHERE id = ?').bind(id).first();
+  if (!latest) fail(404, 'Review not found.');
+  if (latest.version !== body.version) fail(409, 'This review changed. Refresh before changing its reply.');
+  if (latest.visibility !== 'visible') fail(409, 'Restore this review to the website before changing its reply.');
+  return json(latest);
+}
+async function listReplyAudit(url, db) {
+  const id = url.searchParams.get('reviewId');
+  if (!UUID.test(id || '')) fail(400, 'Choose a review.');
+  const { results } = await db.prepare('SELECT actor_email, action, old_reply, new_reply, review_version, changed_at FROM owner_reply_audit WHERE review_id = ? ORDER BY id DESC LIMIT 50').bind(id).all();
+  return json({ audit: results });
+}
 async function serveAsset(request, env, path, admin = false) {
   if (!env.ASSETS) fail(503, 'The website is temporarily unavailable.');
   const url = new URL(request.url); if (path) url.pathname = path;
@@ -205,9 +235,13 @@ export default {
       url.pathname = decodedPath.replace(/\/{2,}/g, '/');
       if (url.hostname === ADMIN_HOST) {
         const email = await adminIdentity(request, env);
-        if (url.pathname === '/api/admin/reviews' && request.method === 'GET') return await listReviews(url, requireDB(env), true);
+        if (url.pathname === '/api/admin/reviews' && request.method === 'GET') return await listReviews(url, requireDB(env), true, email);
+        const replyMatch = /^\/api\/admin\/reviews\/([^/]+)\/reply$/.exec(url.pathname);
+        if (replyMatch && request.method === 'PATCH') return await manageReply(request, env, replyMatch[1], email);
+        if (replyMatch && request.method === 'DELETE') return await manageReply(request, env, replyMatch[1], email, true);
         const match = /^\/api\/admin\/reviews\/([^/]+)$/.exec(url.pathname);
         if (match && request.method === 'PATCH') return await moderate(request, env, match[1], email);
+        if (url.pathname === '/api/admin/reply-audit' && request.method === 'GET') return await listReplyAudit(url, requireDB(env));
         if (url.pathname === '/api/admin/audit' && request.method === 'GET') {
           const id = url.searchParams.get('reviewId'); if (!UUID.test(id || '')) fail(400, 'Choose a review.');
           const { results } = await requireDB(env).prepare('SELECT actor_email, reason, old_visibility, new_visibility, review_version, changed_at FROM moderation_audit WHERE review_id = ? ORDER BY id DESC LIMIT 50').bind(id).all();

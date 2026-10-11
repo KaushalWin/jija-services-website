@@ -6,10 +6,10 @@ Responsive static catalogue for JIJA Services LLC in Somerset, New Jersey.
 - Search, category filters, product details, and direct Call/Email/WhatsApp actions
 - Retail and wholesale delivery information
 - Walmart and Amazon marketplace placeholders marked “Coming soon”
-- Public customer reviews with Turnstile submission verification, D1 storage and Access-protected moderation
+- Public customer reviews, Turnstile-verified submissions, D1 storage and Access-protected moderation
 - No cart or payment processing
 
-Review setup and verification: [REVIEWS-SETUP.md](REVIEWS-SETUP.md). Production deployment is pending independent review and completed Access configuration.
+Review setup and verification: [REVIEWS-SETUP.md](REVIEWS-SETUP.md). The existing review backend is deployed; the owner-reply changes on this branch are pending independent review and a separate release.
 
 ## Build and deploy
 

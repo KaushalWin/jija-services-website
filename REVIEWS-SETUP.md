@@ -55,3 +55,14 @@ npm exec --yes --package=node@22 -- npm run test:ui
 Screenshots are `.review-qa/reviews-desktop.png` (viewport1440), `reviews-mobile.png` (viewport360), and `admin-desktop.png`. Public screenshots isolate the section by hiding sticky navigation only during capture; production CSS is unchanged. All names/comments are explicitly preview fixtures and must never enter the production database.
 
 Sources: [Workers pricing](https://developers.cloudflare.com/workers/platform/pricing/), [D1 pricing](https://developers.cloudflare.com/d1/platform/pricing/), [Access JWT verification](https://developers.cloudflare.com/cloudflare-one/access-controls/applications/http-apps/authorization-cookie/validating-json/), [Access policy examples](https://developers.cloudflare.com/cloudflare-one/access-controls/policies/common-policies/), [Turnstile verification and idempotent retries](https://developers.cloudflare.com/turnstile/get-started/server-side-validation/), [Playwright persistent profiles](https://playwright.dev/docs/api/class-browsertype#browser-type-launch-persistent-context).
+
+## Owner replies (source-only update)
+
+The existing review backend remains deployed. The owner-reply changes on this branch have not been deployed. Apply migrations/0002_owner_replies.sql after the deployed review schema as part of a separately reviewed release.
+
+- An authenticated owner can publish, edit, or remove a plain-text reply on a visible review. Replies are limited to 1–1,000 characters and appear publicly under “Reply from JIJA Services.”
+- Reply API requests use the existing Cloudflare Access verification and same-origin protection. Writes use the review version to reject stale edits. A database trigger records the verified owner, action, previous reply and new reply atomically with the update.
+- Replies appear only with visible reviews. Hiding or removing a review also hides its saved reply; restoring the review shows it again. Editing a reply does not change review visibility.
+- Admin drafts are scoped to the verified owner and review. Drafts are kept in the current tab when browser session storage is unavailable, with a reminder to copy before reloading; sign-out or a verified owner change clears drafts.
+
+The existing deployment checklist above describes the already deployed base release. Its historical migration and release steps are unchanged.
